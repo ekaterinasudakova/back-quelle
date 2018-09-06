@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+
+	<title>Quelle</title>
+
+	<style>
+		ul li {
+			display: flex;
+			border-bottom: 10px solid black;
+			padding: 30px 0;
+		}
+		ul li div {
+			width: 50%;
+		}
+		ul li div img {
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>submissions</h1>
+		<ul>
+        <% for(var i = 0; i < submissionData.length; i++) { %>
+			<li>	
+				<div>
+					<img src="./<%= submissionData[i].imageASrc %>" class="responsive-img">
+					<button type="button" data-index="<%=i%>" data-ab= "A" class="vote-button"> celle-ci</button>
+					<%= submissionData[i].imageAVotes %> votes
+				</div>
+				<div>
+					<img src="./<%= submissionData[i].imageBSrc %>" class="responsive-img">
+					<button type="button" data-index="<%=i%>" data-ab= "B" class="vote-button">celle-là</button>
+					<%= submissionData[i].imageBVotes %> votes
+				</div>
+			</li>
+		<% } %>
+		</ul>
+	</div>
+
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+	<script>
+		let voteButtons = document.querySelectorAll('.vote-button');
+
+		voteButtons.forEach((voteButton) => {
+			voteButton.addEventListener('click', () => {
+				console.log('voteButton clicked')
+				console.log('voteButton-index', voteButton.dataset.index)
+				// send ajax request to tell back end to add a vote
+				axios.post('/vote/0/'+ voteButton.dataset.ab)
+				// it needs a submission index number, and an A or B
+				// .then = make button dissapear so that you can't vote again
+				// . error catching thing
+				
+			})
+		})
+	</script>
+</body>
+</html>

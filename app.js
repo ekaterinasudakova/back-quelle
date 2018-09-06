@@ -6,6 +6,8 @@ const ejs = require('ejs');
 //takes file and extracts extention
 const path = require('path');
 
+let submissionsArray = [];
+
 
 //storage engine via disk storage
 const storage = multer.diskStorage({
@@ -57,6 +59,7 @@ app.use('/public', express.static('./public'));
 
 app.get('/', (req,res)=> res.render('index'));
 
+app.get('/submissions', (req,res) => res.render('submissionsview', {submissionData: submissionsArray}));
 
 app.post('/upload', (req,res) =>{
     upload(req, res, (err) => {
@@ -70,14 +73,38 @@ app.post('/upload', (req,res) =>{
                     msg: 'Error: No File Selected!'
                 });
             } else {
-                res.render('index',{
+                res.render('index', { // rendering the same view again
                     msg: 'Files Uploaded!',
                     files: req.files
                 });
+                console.log(req.files[0].path)
+                submissionsArray.unshift({
+                    // whatever data you want to keep for later
+                    imageASrc: req.files[0].path,
+                    imageBSrc: req.files[1].path,
+                    imageAVotes: 0,
+                    imageBVotes: 0,
+                })
+                // res.render('confirm', { // rendering a different view after they submit
+                //     msg: 'Files Uploaded!',
+                //     files: req.files
+                // });
             }
         }
     });
 });
+
+
+app.post('/vote/:submission/:image', (req,res) => {
+    console.log('RECIEVED vote for ', req.params.submission , req.params.image)
+    res.send(req.params);
+    // submissionsArray[req.params.submission]["image"+req.params.image+"Votes"]++
+    if (req.params.image === "A") {
+        submissionsArray[req.params.submission].imageAVotes++
+    } else if (req.params.image === "B") {
+        submissionsArray[req.params.submission].imageBVotes++
+    }
+})
 
 const port = 3400;
 app.listen(port, ()=> console.log( `server started on port ${port}`));
