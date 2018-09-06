@@ -6,7 +6,8 @@ const ejs = require('ejs');
 //takes file and extracts extention
 const path = require('path');
 
-//set storage engine via disk storage
+
+//storage engine via disk storage
 const storage = multer.diskStorage({
     destination: './public/uploads/',
     filename: function(req, file, cb){
@@ -43,7 +44,7 @@ function checkFileType(file, cb){
 const app = express()
 
 // //tell the api to respond to anybody in universe
-// app.use(cors())
+app.use(cors())
 
 // app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: true}));
