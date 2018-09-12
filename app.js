@@ -97,13 +97,13 @@ app.post('/upload', (req,res) =>{
 
 app.post('/vote/:submission/:image', (req,res) => {
     console.log('RECIEVED vote for ', req.params.submission , req.params.image)
-    res.send(req.params);
     // submissionsArray[req.params.submission]["image"+req.params.image+"Votes"]++
     if (req.params.image === "A") {
         submissionsArray[req.params.submission].imageAVotes++
     } else if (req.params.image === "B") {
         submissionsArray[req.params.submission].imageBVotes++
     }
+    res.send( submissionsArray );
 })
 
 const port = 3400;

@@ -7,6 +7,12 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
 
 	<title>Quelle</title>
+	<style>
+		.take-me-to-subs{
+			margin-bottom: 2em;
+			background-color: orange;
+		}
+	</style>
 </head>
 <body>
 	<div class="container">
@@ -24,6 +30,8 @@
 			</div>
 			<button type="submit" class="btn">Submit</button>
 		  </form>
+			<br>
+			<a href="submissions"><button class="take-me-to-subs btn">Take me to submissions >></button>
 			<br>
 			<% if ( typeof files !== 'undefined' ) {
 				for(var i = 0; i < files.length; i++) { %>

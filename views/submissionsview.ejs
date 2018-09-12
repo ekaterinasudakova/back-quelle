@@ -16,27 +16,67 @@
 		}
 		ul li div {
 			width: 50%;
+			margin: 0 .5em;
 		}
 		ul li div img {
 			width: 100%;
 		}
+		.take-me-to-indx{
+			background-color: orange;
+		}
+		.voting-container{
+			display: flex;
+			justify-content: space-evenly;
+			align-items: center;
+			flex-direction: column;
+			width: 100%;
+			padding-top: 1em; 
+		}
+/*MODAL STYLING*/
+		.vote-modal{
+			position: fixed;
+			transition: all 0.3s ease;
+		}
+		.cbp-spmenu-horizontal {
+			width: 100%;
+			height: 150px;
+			left: 0;
+			z-index: 1000;
+			overflow: hidden;
+		}
+		.cbp-spmenu-top {
+			top: -150px;
+		}
+		.cbp-spmenu-top.cbp-spmenu-open {
+			top: 0px;
+		}
+
 	</style>
 </head>
 <body>
 	<div class="container">
+		<div class="vote-modal cbp-spmenu-horizontal cbp-spmenu-top">
+			<p>Thank you for voting!</p>
+		</div>
 		<h1>submissions</h1>
+		<a href="/"><button class="take-me-to-indx btn">Take me to upload page >></button>
+
 		<ul>
         <% for(var i = 0; i < submissionData.length; i++) { %>
 			<li>	
 				<div>
 					<img src="./<%= submissionData[i].imageASrc %>" class="responsive-img">
-					<button type="button" data-index="<%=i%>" data-ab= "A" class="vote-button"> celle-ci</button>
-					<%= submissionData[i].imageAVotes %> votes
+					<div class="voting-container">
+						<button type="button" data-index="<%=i%>" data-ab= "A" id="showTop" class="vote-button btn"> celle-ci</button>
+						<p data-index="<%=i%>" data-ab= "A" class="vote-counter"><%= submissionData[i].imageAVotes %> votes</p>
+					</div>
 				</div>
 				<div>
 					<img src="./<%= submissionData[i].imageBSrc %>" class="responsive-img">
-					<button type="button" data-index="<%=i%>" data-ab= "B" class="vote-button">celle-là</button>
-					<%= submissionData[i].imageBVotes %> votes
+					<div class="voting-container">
+						<button type="button" data-index="<%=i%>" data-ab= "B" id="showTop" class="vote-button btn">celle-là</button>
+						<p data-index="<%=i%>" data-ab= "B" class="vote-counter"><%= submissionData[i].imageBVotes %> votes</p>
+					</div>
 				</div>
 			</li>
 		<% } %>
@@ -46,20 +86,46 @@
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
 	<script>
-		let voteButtons = document.querySelectorAll('.vote-button');
+	let voteButtons = document.querySelectorAll('.vote-button');
+	let voteCounts = document.querySelectorAll('.vote-counter');
+	// let showTop = document.getElementById( 'showTop' );
+	
 
-		voteButtons.forEach((voteButton) => {
-			voteButton.addEventListener('click', () => {
-				console.log('voteButton clicked')
-				console.log('voteButton-index', voteButton.dataset.index)
-				// send ajax request to tell back end to add a vote
-				axios.post('/vote/0/'+ voteButton.dataset.ab)
-				// it needs a submission index number, and an A or B
-				// .then = make button dissapear so that you can't vote again
-				// . error catching thing
-				
+	// showTop.onclick = function() {
+	// 	let menuTop = document.querySelector( '.vote-modal' );
+	// 	console.log(menuTop);
+	// 	this.classList.toggle( 'active' );
+	// 	menuTop.classList.toggle( 'cbp-spmenu-open' );
+	// };
+
+	voteButtons.forEach((voteButton) => {
+		voteButton.addEventListener('click', (e) => {
+			e.preventDefault();
+			console.log('voteButton clicked')
+			console.log('voteButton-index', voteButton.dataset.index)
+			// send ajax request to tell back end to add a vote
+			axios.post('/vote/'+voteButton.dataset.index+'/'+ voteButton.dataset.ab)
+			// it needs a submission index number, and an A or B
+			.then((response) => {
+				console.log('thanks for submitting your vote!')
+				console.log('voteCounts', voteCounts)
+				console.log(response.data)
+				response.data.forEach((set, i) => {
+					console.log("put this new number in the DOM in the right place", set)
+					console.log("set.imageAVotes", document.querySelectorAll(".vote-counter[data-ab=A]"))
+
+					document.querySelector(".vote-counter[data-index='"+i+"'][data-ab='A']").innerHTML = set.imageAVotes + ' votes';
+					document.querySelector(".vote-counter[data-index='"+i+"'][data-ab='B']").innerHTML = set.imageBVotes + ' votes';
+				})
 			})
+			.catch((err) => {
+				console.warn(err)
+			})
+			// .then = make button dissapear so that you can't vote again, add success message and update dom
+			// . error catching thing
+			
 		})
+	})
 	</script>
 </body>
 </html>
